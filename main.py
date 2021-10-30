@@ -208,6 +208,7 @@ class Menu(QWidget):
 
     def btn_pressed(self):
         sender = self.sender().text()
+        self.main_text = self.main.text()
         if sender == 'CE':
             self.main_text = ''
         elif sender == 'prov':

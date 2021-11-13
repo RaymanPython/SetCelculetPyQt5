@@ -155,7 +155,7 @@ def provset(s):
                 #print(i)
                 #print(namedict)
                 try:
-                    bool_res_list = list(map(eval, s1.split('==')))
+                    bool_res_list = list(map(lambda x: bool(eval(x)), s1.split('==')))
                     bool_res = prov_bool_list(bool_res_list)
                     #print(bool_res == eval(s1), 5)
                     #bool_res = eval(s1)
@@ -189,9 +189,10 @@ def main():
 
 class File:
     def __init__(self, name):
-        self.name = name
+        self.name = name + '.db'
 
     def save(self, s, answer, name_table, name_list, res):
+        print(self.name)
         conn = sqlite3.connect(self.name)
         cursor = conn.cursor()
         n = len(name_list) + 1
@@ -250,6 +251,7 @@ from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel
 from PyQt5.QtWidgets import *
 from PyQt5 import QtWidgets
+import open_file
 
 
 class Menu(QWidget):
@@ -314,7 +316,7 @@ class Menu(QWidget):
     def equal(self):
         global name_table_main
         ev_str = self.main_text
-        self.file.name = name_table_main
+        self.file.name = name_table_main + '.db'
         if ev_str[-2:] == '/0':
             res_text = "ОШИБКА"
         else:
@@ -331,6 +333,7 @@ class Menu(QWidget):
         self.result.setText(self.result_text)
         if self.result_text in ['True', 'False']:
             self.file.save(self.main_text, self.result_text, 'name_table1', names_var, res_list_base)
+            open_file.table_to_pdf(name_table_main + '.db', 'name_table1', self.main_text, self.result_text)
     '''
     def resizeEvent(self, event):
         self.resized.emit()
@@ -387,6 +390,7 @@ class Table(QWidget):
 class Main(QWidget):
     def __init__(self):
         super().__init__()
+        global name_table_main
         self.n = 3
         self.setWindowTitle("Калькулятор")
         self.delta = 0.00000001
@@ -452,10 +456,11 @@ class Main(QWidget):
 
 if __name__ == '__main__':
     global name_table_main
-    name_table_main = ''
+    name_table_main = '5'
     app = QApplication(sys.argv)
-    form_main = Main()
-    form_main.show()
     form = Menu(name_table_main)
     form.show()
+    form_main = Main()
+    form_main.show()
     sys.exit(app.exec())
+

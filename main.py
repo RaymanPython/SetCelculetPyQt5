@@ -251,7 +251,8 @@ from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel
 from PyQt5.QtWidgets import *
 from PyQt5 import QtWidgets
-import open_file
+import base_to_pdf
+import os
 
 
 class Menu(QWidget):
@@ -333,7 +334,19 @@ class Menu(QWidget):
         self.result.setText(self.result_text)
         if self.result_text in ['True', 'False']:
             self.file.save(self.main_text, self.result_text, 'name_table1', names_var, res_list_base)
-            open_file.table_to_pdf(name_table_main + '.db', 'name_table1', self.main_text, self.result_text)
+            try:
+                base_to_pdf.table_to_docx(self.file.name, 'name_table1', self.main_text, self.result_text)
+            except:
+                try:
+                    import os
+                    path = os.path.join(os.path.abspath(os.path.dirname(__file__)), ''.join(name_table_main.split('.')[:-1]) + ".docx")
+                    os.remove(path)
+                except:
+                    self.result_text += ' Файл не верный!'
+                    self.result.setText(self.result_text)
+                    self.result.setStyleSheet("QLabel {color:red}")
+
+
     '''
     def resizeEvent(self, event):
         self.resized.emit()
@@ -403,12 +416,12 @@ class Main(QWidget):
         btn = QPushButton('Далее', self)
         btn.setGeometry(239* self.n + 1 - 60, 250, 60, 60)
         btn.clicked.connect(self.btn_pressed)
-        self.main_file = QLineEdit('', self)
-        self.main_file.setGeometry(0, 180, 239 * self.n - 60, 60)
-        self.main.setFont(font)
-        btn_file = QPushButton('Далее', self)
-        btn_file.setGeometry(239 * self.n + 1 - 60, 180, 60, 60)
-        btn_file.clicked.connect(self.btn_file_pressed)
+        #self.main_file = QLineEdit('', self)
+        #self.main_file.setGeometry(0, 180, 239 * self.n - 60, 60)
+        #self.main.setFont(font)
+        #btn_file = QPushButton('Далее', self)
+        #btn_file.setGeometry(239 * self.n + 1 - 60, 180, 60, 60)
+        #btn_file.clicked.connect(self.btn_file_pressed)
 
         self.result = QLabel('', self)
         self.result.setGeometry(0, 0, 238 * self.n, 15)
@@ -463,4 +476,3 @@ if __name__ == '__main__':
     form_main = Main()
     form_main.show()
     sys.exit(app.exec())
-

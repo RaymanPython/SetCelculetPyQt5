@@ -46,12 +46,11 @@ def table_to_docx(file_name, table_name, s, ans):
     matric = base_data(file_name, table_name)
     matric, n, m = list(map(list, matric))
     document = Document()
-
-    document.add_heading(s, 0)
+    document.add_heading('', 0)
     if ans:
-        document.add_paragraph('Равенство выполняется')
+        document.add_paragraph('Равенство выполняется:' + s)
     else:
-        document.add_paragraph('Равенство не выполняется')
+        document.add_paragraph('Равенство не выполняется:' + s)
     table1 = document.add_table(rows=0, cols=int(m[0]))
     # print(n, m)
     # hdr_cells=table1.rows[0]
@@ -62,6 +61,7 @@ def table_to_docx(file_name, table_name, s, ans):
     table1.style = 'Table Grid'
     # document.save("testing.docx")
     document.save(''.join(file_name.split('.')[:-1]) + ".docx")
-    
-    
+
+
 # table_to_docx('5.db', 'name_table1', 'A=A', 'True')
+

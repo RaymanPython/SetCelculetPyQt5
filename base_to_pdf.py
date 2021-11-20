@@ -32,12 +32,12 @@ def table_to_pdf(file_name, table_name, s, ans):
     pdf.add_page()
     pdf.set_font("Arial", size=12)
     pdf.cell(200, 10, txt=s, ln=1, align="C")
-    #.encode('UTF-5', 'replace')
+    # .encode('UTF-5', 'replace')
     if ans:
         pdf.cell(0, 10, txt="Equality holds", ln=2, align="C")
     else:
         pdf.cell(0, 10, txt="No equality holds", ln=2, align="C")
-    #print(''.join(file_name.split('.')[:-1]) + ".pdf")
+    # print(''.join(file_name.split('.')[:-1]) + ".pdf")
     pdf.output(''.join(file_name.split('.')[:-1]) + ".pdf")
 
 
@@ -53,19 +53,15 @@ def table_to_docx(file_name, table_name, s, ans):
     else:
         document.add_paragraph('Равенство не выполняется')
     table1 = document.add_table(rows=0, cols=int(m[0]))
-    print(n, m)
-    #hdr_cells=table1.rows[0]
+    # print(n, m)
+    # hdr_cells=table1.rows[0]
     for i in matric:
         row_cells = table1.add_row().cells
         for j in range(len(i)):
             row_cells[j].text = i[j]
     table1.style = 'Table Grid'
-    #document.save("testing.docx")
+    # document.save("testing.docx")
     document.save(''.join(file_name.split('.')[:-1]) + ".docx")
 
 
-
-
-
-
-#table_to_docx('5.db', 'name_table1', 'A=A', 'True')
+# table_to_docx('5.db', 'name_table1', 'A=A', 'True')

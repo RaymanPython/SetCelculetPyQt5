@@ -1,4 +1,17 @@
-class bol():
+import sys
+from decimal import Decimal
+import sqlite3
+#  import base_data
+from PyQt5 import QtCore
+from PyQt5.QtGui import QFont
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel
+from PyQt5.QtWidgets import *
+from PyQt5 import QtWidgets
+import base_to_pdf
+import os
+
+
+class Bol():
     def __init__(self, x):
         self.x = x
         if type(x) == str:
@@ -7,71 +20,65 @@ class bol():
             elif x == 'False':
                 self.x = False
             else:
-                #print(x, type(x))
+                # print(x, type(x))
                 global namedict
-                #print(namedict[x])
-                self.x = result(x) #namedict[x]
-
+                # print(namedict[x])
+                self.x = result(x)  # namedict[x]
 
     def __eq__(self, other):
         if type(other) == str:
             other = result(other)
-        if type(other) == type(bol(True)):
+        if type(other) == Bol:
             other = other.res()
         return self.x == other
-
 
     def __add__(self, other):
         if type(other) == str:
             other = result(other)
-        if type(other) == type(bol(True)):
+        if type(other) == Bol:
             other = other.res()
         return self.x or other
-
 
     def __sub__(self, other):
         if type(other) == str:
             other = result(other)
-        if type(other) == type(bol(True)):
+        if type(other) == Bol:
             other = other.res()
-        return  self.x and other
-
+        return self.x and other
 
     def __mul__(self, other):
         if type(other) == str:
             other = result(other)
-        if type(other) == type(bol(True)):
+        if type(other) == Bol:
             other = other.res()
         return self.x and not other
-
 
     def __mod__(self, other):
         if type(other) == str:
             other = result(other)
-        if type(other) == type(bol(True)):
+        if type(other) == Bol:
             other = other.res()
         return self.x != other
-
 
     def res(self):
         return self.x
 
 
-
-def bolname(s, name):
+def bolname(s):
     s1 = ''
     c = True
     for i in s:
         if i == '(':
-            s1 += 'bol'
+            s1 += 'Bol'
         s1 += i
     return s1
 
 
 def result(x):
     global namedict
-    #print(x)
+    #  print(x)
     return namedict[x]
+
 
 def prov_bool_list(a):
     if len(a) == 0:
@@ -81,6 +88,7 @@ def prov_bool_list(a):
             if a[i] != a[i - 1]:
                 return False
         return True
+
 
 def split(s, b):
     a = []
@@ -122,7 +130,7 @@ def f(a, n):
 
 def provset(s):
     global namedict, dv
-    znak = {'∪': '+', '⋂': '-', "\\": '*', '*': '/'}
+    #  znak = {'∪': '+', '⋂': '-', "\\": '*', '*': '/'}
     znak = {'∪': '+', '⋂': '-', "\\": '*', 'Δ': '%', '∅': 'False'}
     a = s.split('=')
     split_list = ['+', '-', '*', ' ', '(', ')', '=', '%']
@@ -136,7 +144,7 @@ def provset(s):
             name, s1 = split(s1, split_list)
             name = list(set(name))
             print(name)
-            s1 = bolname(s1, name)
+            s1 = bolname(s1)
             c = True
             global dv
             dv = []
@@ -150,15 +158,16 @@ def provset(s):
                 namedict = dict()
                 for k in range(len(name)):
                     namedict[name[k]] = i[k]
-                #print(s1)
-                #print(name)
-                #print(i)
-                #print(namedict)
+                #  print(s1)
+                #  print(name)
+                #  print(i)
+                #  print(namedict)
                 try:
-                    bool_res_list = list(map(lambda x: bool(eval(x)), s1.split('==')))
+                    bool_res_list = list(map(lambda x: bool(eval(x)),
+                                             s1.split('==')))
                     bool_res = prov_bool_list(bool_res_list)
-                    #print(bool_res == eval(s1), 5)
-                    #bool_res = eval(s1)
+                    #  print(bool_res == eval(s1), 5)
+                    #  bool_res = eval(s1)
                     res_list_base.append(i + bool_res_list + [bool_res])
                     if not bool_res:
                         c = False
@@ -175,8 +184,8 @@ def provset(s):
                     s1 += '='
             name, s1 = split(s1, split_list)
             name = list(set(name))
-            if 'bol' in name:
-                return 'В вражении нельзя испольовать имя bol'
+            if 'Bol' in name:
+                return 'В вражении нельзя испольовать имя Bol'
             else:
                 return 'Некорректное выражения'
     else:
@@ -184,7 +193,7 @@ def provset(s):
 
 
 def main():
-    return provset(input('Введите, пожалуйста выражение с использованием операторов ∪ или +, ⋂ или -, \\ или * '))
+    return provset(input())
 
 
 class File:
@@ -197,7 +206,7 @@ class File:
         cursor = conn.cursor()
         n = len(name_list) + 1
         sql = 'CREATE TABLE IF NOT EXISTS'
-        cursor.execute( 'Drop table if exists ' + name_table) #удалеиние таблицы
+        cursor.execute('Drop table if exists ' + name_table)
         sql += ' ' + name_table + '('
         for i in range(n):
             if i == n - 1:
@@ -205,15 +214,15 @@ class File:
             else:
                 sql += 'atr' + str(i) + ' ' + 'text' + ','
         sql += ');'
-        #sql += '/n' + s + ' = ' + str(answer)
+        #  sql += '/n' + s + ' = ' + str(answer)
         print(sql)
         cursor.execute(sql)
-        #wprint(cursor.fetchall())  # o
+        #  wprint(cursor.fetchall()))  #  o
         sql = 'INSERT INTO ' + name_table + ' VALUES('
         for i in name_list:
             sql += '"' + str(i) + '"' + ','
         sql += '"result=' + str(answer) + '")'
-        #print(sql)
+        #  print(sql)
         cursor.execute(sql)
         for i in res:
             sql = 'INSERT INTO ' + name_table + ' VALUES('
@@ -222,43 +231,30 @@ class File:
                     sql += '"' + str(i[j]) + '"' + ')'
                 else:
                     sql += '"' + str(i[j]) + '"' + ','
-            #print(sql)
+            #  print(sql)
             cursor.execute(sql)
         conn.commit()
-        #Drop table if exists
-        #CREATE TABLE IF NOT EXISTS
+        #  Drop table if exists
+        #  CREATE TABLE IF NOT EXISTS
+
 
 def get_string_ex(s):
-    #функция котрая получает пременную и вовразает строку где записаны предки класас этой перееменнойй через точку
+    #  функция котрая получает пременную и вовращает
+    #  строку где записаны предки класас этой перееменнойй через точку
     s = type(s).__bases__
     s = str(s)
     return s.split("'")[1]
 
+
 def get_ex(a, prov):
-    #функция которая проверяет есть ли предок prov
+    #  функция которая проверяет есть ли предок prov
     s = get_string_ex(a)
     s = s.split('.')
     return prov in s
 
 
-import sys
-from decimal import Decimal
-import sqlite3
-#import base_data
-
-from PyQt5 import QtCore
-from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel
-from PyQt5.QtWidgets import *
-from PyQt5 import QtWidgets
-import base_to_pdf
-import os
-
-
 class Menu(QWidget):
-    #resized = QtCore.pyqtSignal()
-
-
+    #  resized = QtCore.pyqtSignal()
     def __init__(self, name_table_main):
         super().__init__()
         self.n = 3
@@ -277,29 +273,30 @@ class Menu(QWidget):
         self.result = QLabel('', self)
         self.result.setGeometry(0, 0, 238 * self.n, 15)
         self.result.setAlignment(QtCore.Qt.AlignRight)
-        #znak = {'∪': '+', '⋂': '-', "\\": '*', '*': '//'}
+        #  znak = {'∪': '+', '⋂': '-', "\\": '*', '*': '//'}
         self.Widgets.append(self.result)
-        #self.resized.connect(self.someFunction)
-        symbols = ['A', 'B', 'C', 'Δ',
+        #  self.resized.connect(self.someFunction)
+        symBols = ['A', 'B', 'C', 'Δ',
                    'D', 'F', 'K', '\\',
                    'L', 'M', '∅', '⋂',
                    '<-', '=', 'CE', '∪',
                    '(', ')', 'prov']
-        #self.spec_symbols = znak.keys()+
+        #  self.spec_symBols = znak.keys()+
         self.btns = []
         v_size, h_size = 50, 60 * self.n
-        for i in range(0, h_size * len(symbols), h_size):
-            btn = QPushButton(symbols[i // h_size], self)
-            btn.setGeometry(i % (h_size * 4), 80 + v_size * (i // (h_size * 4)), h_size, v_size)
+        for i in range(0, h_size * len(symBols), h_size):
+            btn = QPushButton(symBols[i // h_size], self)
+            btn.setGeometry(i % (h_size * 4),
+                            80 + v_size * (i // (h_size * 4)), h_size, v_size)
             btn.clicked.connect(self.btn_pressed)
             self.btns.append(btn)
         self.btns[-1].resize(120 * self.n, 50)
         self.Widgets += self.btns
-
         self.main_text, self.result_text, self.last_sender = '', '', ''
         self.file = File(name_table_main + '.db')
-        for  i in self.Widgets:
-            self.dict_cor_size[i] = [i.pos().x(), i.pos().y(), i.size().width(), i.size().height()]
+        for i in self.Widgets:
+            self.dict_cor_size[i] =\
+                [i.pos().x(), i.pos().y(), i.size().width(), i.size().height()]
 
     def btn_pressed(self):
         sender = self.sender().text()
@@ -333,20 +330,22 @@ class Menu(QWidget):
             self.result.setStyleSheet("QLabel {color:red}")
         self.result.setText(self.result_text)
         if self.result_text in ['True', 'False']:
-            self.file.save(self.main_text, self.result_text, 'name_table1', names_var, res_list_base)
+            self.file.save(self.main_text, self.result_text, 'name_table1',
+                           names_var, res_list_base)
             try:
-                base_to_pdf.table_to_docx(self.file.name, 'name_table1', self.main_text, self.result_text)
+                base_to_pdf.table_to_docx(self.file.name, 'name_table1',
+                                          self.main_text, self.result_text)
             except:
                 try:
                     import os
-                    path = os.path.join(os.path.abspath(os.path.dirname(__file__)), ''.join(name_table_main.split('.')[:-1]) + ".docx")
+                    path = os.path.abspath(os.path.dirname(__file__))
+                    paths = ''.join(name_table_main.split('.')[:-1]) + ".docx"
+                    path = os.path.join(path, s)
                     os.remove(path)
                 except:
                     self.result_text += ' Файл не верный!'
                     self.result.setText(self.result_text)
                     self.result.setStyleSheet("QLabel {color:red}")
-
-
     '''
     def resizeEvent(self, event):
         self.resized.emit()
@@ -360,9 +359,12 @@ class Menu(QWidget):
                 height = self.size().height()
                 koefW = width / self.w
                 koefH = height / self.h
-                i.setGeometry(a[0] * koefW, a[1] * koefH, a[2] * koefW, a[3] * koefH)
-                #self.__setattr__(i, b)
+                i.setGeometry(a[0] * koefW,
+                a[1] * koefH,
+                a[2] * koefW, a[3] * koefH)
+                self.__setattr__(i, b)
     '''
+
 
 class Table(QWidget):
     def __init__(self, file_name, table_name):
@@ -379,20 +381,20 @@ class Table(QWidget):
         cursor.execute(sql)
         m = cursor.fetchone()
         central_widget = QWidget(self)  # Создаём центральный виджет
-        print('443')
+        # print('443')
         grid_layout = QGridLayout()
         central_widget.setLayout(grid_layout)
-        print('443')
-        #self.setCentralWidget(central_widget)
-        print('442')
-          # Создаём QGridLayout
+        #  print('443')
+        #  self.setCentralWidget(central_widget)
+        #  print('442')
+        #  Создаём QGridLayout
         table = QTableWidget(self)
         table.setColumnCount(int(m[0]))  # Устанавливаем три колонки
         table.setRowCount(int(n[0]))
         sql = 'SELECT * FROM ' + table_name
         cursor.execute(sql)
         a = cursor.fetchall()
-        print(a, n[0], m[0])
+        #  print(a, n[0], m[0])
         for i in range(len(a)):
             x = list(a[i])
             for j in range(len(x)):
@@ -414,15 +416,14 @@ class Main(QWidget):
         self.main.setGeometry(0, 250, 239 * self.n - 60, 60)
         self.main.setFont(font)
         btn = QPushButton('Далее', self)
-        btn.setGeometry(239* self.n + 1 - 60, 250, 60, 60)
+        btn.setGeometry(239 * self.n + 1 - 60, 250, 60, 60)
         btn.clicked.connect(self.btn_pressed)
-        #self.main_file = QLineEdit('', self)
-        #self.main_file.setGeometry(0, 180, 239 * self.n - 60, 60)
-        #self.main.setFont(font)
-        #btn_file = QPushButton('Далее', self)
-        #btn_file.setGeometry(239 * self.n + 1 - 60, 180, 60, 60)
-        #btn_file.clicked.connect(self.btn_file_pressed)
-
+        #   self.main_file = QLineEdit('', self)
+        #   self.main_file.setGeometry(0, 180, 239 * self.n - 60, 60)
+        #   self.main.setFont(font)
+        #   btn_file = QPushButton('Далее', self)
+        #   btn_file.setGeometry(239 * self.n + 1 - 60, 180, 60, 60)
+        #   btn_file.clicked.connect(self.btn_file_pressed)
         self.result = QLabel('', self)
         self.result.setGeometry(0, 0, 238 * self.n, 15)
         self.result.setAlignment(QtCore.Qt.AlignRight)
@@ -433,15 +434,13 @@ class Main(QWidget):
             s = s.split(';')
             s[0] = ''.join(s[0].split())
             s[1] = ''.join(s[1].split())
-            #QtWidgets.QFileDialog.getOpenFileName()
-            #name.db;name_table1
-            app_table= QApplication(sys.argv)
-
+            #  QtWidgets.QFileDialog.getOpenFileName()
+            #  name.db;name_table1
+            app_table = QApplication(sys.argv)
             form_main = Table(s[0], s[1])
-            print(2)
+            # print(2)
             form_main.show()
             app_table.exec()
-
         except:
             print(55555)
             self.result.text = 'Файл не найден'

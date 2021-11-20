@@ -62,6 +62,6 @@ def table_to_docx(file_name, table_name, s, ans):
     table1.style = 'Table Grid'
     # document.save("testing.docx")
     document.save(''.join(file_name.split('.')[:-1]) + ".docx")
-
-
+    
+    
 # table_to_docx('5.db', 'name_table1', 'A=A', 'True')

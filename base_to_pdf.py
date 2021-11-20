@@ -48,9 +48,11 @@ def table_to_docx(file_name, table_name, s, ans):
     document = Document()
     document.add_heading('', 0)
     if ans:
-        document.add_paragraph('Равенство выполняется:' + s)
+        res = 'Равенство выполняется:' + s
+        document.add_paragraph().add_run(res).bold = True
     else:
-        document.add_paragraph('Равенство не выполняется:' + s)
+        res = 'Равенство не выполняется:' + s
+        document.add_paragraph().add_run(res).bold = True
     table1 = document.add_table(rows=0, cols=int(m[0]))
     # print(n, m)
     # hdr_cells=table1.rows[0]
@@ -64,4 +66,3 @@ def table_to_docx(file_name, table_name, s, ans):
 
 
 # table_to_docx('5.db', 'name_table1', 'A=A', 'True')
-

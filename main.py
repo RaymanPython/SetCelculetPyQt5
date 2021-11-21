@@ -406,6 +406,10 @@ class Main(QWidget):
     def __init__(self):
         super().__init__()
         global name_table_main
+        manual = 'У Вас открыто два окна в этом окне Вы видетеполя для ввода пути к файлу\n' \
+                 'куда хотите сохранять, ввести файл нужжно без разширения\n' \
+                 'А во втором окне калькуляторе Вы можете ввести выражение и нажать на кнопку prov\n' \
+                 'Удачного пользования!'
         self.n = 3
         self.setWindowTitle("Калькулятор")
         self.delta = 0.00000001
@@ -415,6 +419,9 @@ class Main(QWidget):
         self.main = QLineEdit('', self)
         self.main.setGeometry(0, 250, 239 * self.n - 60, 60)
         self.main.setFont(font)
+        self.qLabel = QLabel(manual, self)
+        self.qLabel.setStyleSheet("QLabel {color:blue}")
+        self.qLabel.setGeometry(5, 5, 480, 240)
         btn = QPushButton('Далее', self)
         btn.setGeometry(239 * self.n + 1 - 60, 250, 60, 60)
         btn.clicked.connect(self.btn_pressed)
